@@ -55,6 +55,7 @@
        .light-theme #settings-submenu { background-color: var(--submenu-bg-light); }
        .light-theme .btn-submenu:hover { background-color: var(--border-light); color: var(--text-primary-light); }
        .light-theme .btn-icon { color: var(--text-secondary-light); }
+       .light-theme #user-display { border-bottom-color: var(--border-light); }
 
 
         body.dark-theme {
@@ -81,6 +82,7 @@
        .dark-theme #settings-submenu { background-color: var(--submenu-bg-dark); }
        .dark-theme .btn-submenu:hover { background-color: var(--border-dark); color: var(--text-primary-dark); }
        .dark-theme .btn-icon { color: var(--text-secondary-dark); }
+       .dark-theme #user-display { border-bottom-color: var(--border-dark); }
 
 
         /* --- ESTRUTURA E LAYOUT --- */
@@ -498,6 +500,16 @@
             text-align: center;
             padding: 20px;
         }
+        
+        #pending-approval-view {
+             display: flex;
+             flex-direction: column;
+             justify-content: center;
+             align-items: center;
+             height: 100%;
+             text-align: center;
+             padding: 20px;
+        }
 
         /* Loader e Modal */
        .loader-container {
@@ -660,6 +672,10 @@
             <div id="contact-list">
                 </div>
             <div class="sidebar-footer">
+                 <div id="user-display" class="hidden" style="padding-bottom: 15px; text-align: center; border-bottom: 1px solid; margin-bottom: 15px;">
+                    <span style="font-size: 0.8rem;" class="text-secondary">Logado como:</span><br>
+                    <strong id="user-email-text" style="font-size: 0.9rem; word-break: break-all;"></strong>
+                </div>
                  <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
                     <button id="add-contact-btn" class="btn btn-primary btn-block">+ Novo Contato</button>
                     <button id="show-birthday-btn" class="btn btn-block btn-secondary">Aniversários</button>
@@ -683,6 +699,12 @@
             <div id="welcome-view">
                 <h2>Selecione um contato</h2>
                 <p class="text-secondary">Escolha um contato na lista à esquerda para ver os detalhes ou adicione um novo.</p>
+            </div>
+            
+            <div id="pending-approval-view" class="hidden">
+                <h2>Cadastro Recebido</h2>
+                <p class="text-secondary">Sua conta foi criada com sucesso e está aguardando a aprovação do administrador.</p>
+                <p class="text-secondary">Você será notificado por email assim que seu acesso for liberado.</p>
             </div>
 
             <div id="contact-detail-view" class="hidden">
@@ -708,10 +730,7 @@
                 <div id="detail-anniversary-container" class="detail-field"><strong>Data de Aniversário:</strong> <span id="detail-anniversary"></span></div>
                 <div id="detail-social-container" class="detail-field" style="flex-direction: column; align-items: flex-start;"></div>
                 <div class="detail-field" style="flex-direction: column; align-items: flex-start;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 4px;">
-                        <strong>Notas:</strong>
-                        <button id="optimize-notes-btn" class="btn btn-sm btn-secondary" title="Otimizar notas com IA">✨ Otimizar</button>
-                    </div>
+                    <strong>Notas:</strong>
                     <p id="detail-notes" style="white-space: pre-wrap; width: 100%;"></p>
                 </div>
             </div>
@@ -839,57 +858,6 @@
         </div>
     </div>
     
-    <div id="gemini-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="gemini-modal-title" style="margin-bottom: 16px;">Assistente de Mensagem de Aniversário</h3>
-            
-            <div id="gemini-modal-initial-form">
-                 <p class="text-secondary" style="margin-bottom: 16px;">Para gerar uma mensagem personalizada, forneça mais alguns detalhes sobre o seu relacionamento.</p>
-                 <div class="form-group">
-                    <label for="gemini-relationship">Qual é a sua proximidade?</label>
-                    <select id="gemini-relationship" class="form-select">
-                        <option value="um colega de trabalho">Colega de trabalho</option>
-                        <option value="um amigo">Amigo(a)</option>
-                        <option value="um amigo próximo">Amigo(a) próximo(a)</option>
-                        <option value="um familiar">Familiar</option>
-                        <option value="um cliente">Cliente</option>
-                    </select>
-                 </div>
-                 <div class="form-group">
-                    <label for="gemini-tone">Qual o tom da mensagem?</label>
-                     <select id="gemini-tone" class="form-select">
-                        <option value="profissional">Profissional</option>
-                        <option value="descontraído">Descontraído</option>
-                        <option value="divertido">Divertido</option>
-                        <option value="caloroso">Caloroso</option>
-                    </select>
-                 </div>
-                 <div class="form-group">
-                    <label for="gemini-nickname">Apelido (opcional)</label>
-                    <input type="text" id="gemini-nickname" class="form-input" placeholder="Ex: Zé, Mariazinha...">
-                 </div>
-                 <div class="modal-buttons">
-                    <button type="button" id="gemini-modal-cancel-btn" class="btn btn-secondary">Cancelar</button>
-                    <button id="gemini-modal-generate-btn" class="btn btn-primary">Gerar Mensagem</button>
-                 </div>
-            </div>
-
-            <div id="gemini-modal-result" class="hidden">
-                <div id="gemini-modal-loader" class="hidden" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 150px;">
-                    <div class="loader-spinner"></div>
-                    <p class="text-secondary" style="margin-top: 10px;">A IA está construindo a sua mensagem...</p>
-                </div>
-                <textarea id="gemini-modal-textarea" class="form-input" rows="8"></textarea>
-                <div class="modal-buttons">
-                    <button id="gemini-modal-regenerate-btn" class="btn btn-secondary">Gerar Outra</button>
-                    <button id="gemini-modal-copy-btn" class="btn btn-secondary">Copiar</button>
-                    <button id="gemini-modal-send-btn" class="btn btn-primary">Enviar via WhatsApp</button>
-                    <button id="gemini-modal-close-btn" class="btn btn-secondary">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <div id="import-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="margin-bottom: 16px;">Importar Contatos de CSV</h3>
@@ -907,7 +875,7 @@
     <script type="module">
         // --- IMPORTAÇÕES DO FIREBASE (SDK MODULAR v9) ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword, getIdTokenResult } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
         import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         import { getFunctions, httpsCallable, connectFunctionsEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js";
         import { connectAuthEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
@@ -934,8 +902,6 @@
         let unsubscribeContacts = null;
         let unsubscribeCategories = null;
 
-        const callGeminiFunction = httpsCallable(functions, 'callGemini');
-
         // --- CONECTAR AOS EMULADORES SE ESTIVER EM AMBIENTE LOCAL ---
         if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
             console.log("Conectando aos emuladores locais...");
@@ -943,7 +909,6 @@
             connectFirestoreEmulator(db, 'localhost', 8080);
             connectFunctionsEmulator(functions, "localhost", 5001);
         }
-
 
         // --- ESTADO DA APLICAÇÃO ---
         let contactsCache = [];
@@ -956,7 +921,6 @@
         let itemToDelete = { id: null, type: null };
         let selectedCategoriesForForm = new Set();
         let currentContactForGemini = null;
-        let lastGeminiPrompt = '';
 
         // --- REFERÊNCIAS AO DOM ---
         const loader = document.getElementById('loader');
@@ -966,12 +930,7 @@
         const contactList = document.getElementById('contact-list');
         const searchInput = document.getElementById('search-input');
         const addContactBtn = document.getElementById('add-contact-btn');
-        const geminiModal = document.getElementById('gemini-modal');
-        const geminiModalGenerateBtn = document.getElementById('gemini-modal-generate-btn');
-        const geminiModalCancelBtn = document.getElementById('gemini-modal-cancel-btn'); // Referência adicionada
-        const geminiModalCloseBtn = document.getElementById('gemini-modal-close-btn');
         
-        // ... (outras referências ao DOM permanecem as mesmas)
         const loginView = document.getElementById('login-view');
         const resetPasswordView = document.getElementById('reset-password-view');
         const authForm = document.getElementById('auth-form');
@@ -992,6 +951,7 @@
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('main-content');
         const welcomeView = document.getElementById('welcome-view');
+        const pendingApprovalView = document.getElementById('pending-approval-view');
         const detailView = document.getElementById('contact-detail-view');
         const formView = document.getElementById('contact-form-view');
         const birthdayView = document.getElementById('birthday-view');
@@ -1012,7 +972,6 @@
         const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
         const birthdayList = document.getElementById('birthday-list');
         const monthFilter = document.getElementById('month-filter');
-        const optimizeNotesBtn = document.getElementById('optimize-notes-btn');
         const categoryList = document.getElementById('category-list');
         const addCategoryForm = document.getElementById('add-category-form');
         const newCategoryNameInput = document.getElementById('new-category-name');
@@ -1024,13 +983,6 @@
         const settingsArrow = document.getElementById('settings-arrow');
         const changePasswordForm = document.getElementById('change-password-form');
         const changePasswordMessage = document.getElementById('change-password-message');
-        const geminiModalInitialForm = document.getElementById('gemini-modal-initial-form');
-        const geminiModalResult = document.getElementById('gemini-modal-result');
-        const geminiModalLoader = document.getElementById('gemini-modal-loader');
-        const geminiModalTextarea = document.getElementById('gemini-modal-textarea');
-        const geminiModalRegenerateBtn = document.getElementById('gemini-modal-regenerate-btn');
-        const geminiModalCopyBtn = document.getElementById('gemini-modal-copy-btn');
-        const geminiModalSendBtn = document.getElementById('gemini-modal-send-btn');
         const importModal = document.getElementById('import-modal');
         const importCancelBtn = document.getElementById('import-cancel-btn');
         const importStartBtn = document.getElementById('import-start-btn');
@@ -1039,6 +991,8 @@
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
         const themeIconSun = document.getElementById('theme-icon-sun');
         const themeIconMoon = document.getElementById('theme-icon-moon');
+        const userDisplay = document.getElementById('user-display');
+        const userEmailText = document.getElementById('user-email-text');
 
 
         // --- FUNÇÕES AUXILIARES ---
@@ -1046,11 +1000,10 @@
         const hideLoader = () => loader.classList.add('hidden');
 
         const showMainContentView = (view) => {
-            [welcomeView, detailView, formView, birthdayView, categoryView, changePasswordView].forEach(v => v.classList.add('hidden'));
+            [welcomeView, detailView, formView, birthdayView, categoryView, changePasswordView, pendingApprovalView].forEach(v => v.classList.add('hidden'));
             if (view) view.classList.remove('hidden');
 
-            // Lógica de responsividade: só alterna as visualizações em telas pequenas se não for a tela de boas-vindas
-            if (window.innerWidth <= 768 && view !== welcomeView) {
+            if (window.innerWidth <= 768 && view !== welcomeView && view !== pendingApprovalView) {
                 mainContent.classList.add('visible');
                 sidebar.classList.add('has-selection');
             }
@@ -1140,31 +1093,73 @@
             resetMessage.textContent = '';
         });
 
+        // =========================================================================
+        // AJUSTE DE SEGURANÇA: onAuthStateChanged COM VERIFICAÇÃO DE APROVAÇÃO
+        // =========================================================================
         onAuthStateChanged(auth, user => {
             if (user) {
-                authContainer.classList.add('hidden');
-                appView.classList.remove('hidden');
-                contactsCollection = collection(db, 'users', user.uid, 'contacts');
-                categoriesCollection = collection(db, 'users', user.uid, 'categories');
-                attachFirestoreListener();
-                // No desktop, mostra a welcome view. No mobile, a lógica de CSS/JS já vai mostrar a lista.
-                if (window.innerWidth > 768) {
-                    showMainContentView(welcomeView);
-                } else {
-                    // Garante que no mobile a view principal fique oculta para mostrar a lista.
-                    hideMainContentView();
-                }
+                // Força a atualização do token para pegar os 'custom claims' (aprovação) mais recentes.
+                user.getIdTokenResult(true).then(idTokenResult => {
+                    console.log("Token do usuário atualizado, permissões carregadas:", idTokenResult.claims);
+                    const isApproved = idTokenResult.claims.approved === true;
+
+                    // Exibe o email do usuário logado no menu
+                    userEmailText.textContent = user.email;
+                    userDisplay.classList.remove('hidden');
+                    
+                    if (isApproved) {
+                        // O usuário está APROVADO, inicia o aplicativo normalmente.
+                        authContainer.classList.add('hidden');
+                        appView.classList.remove('hidden');
+                        
+                        // IMPORTANTE: A estrutura do seu banco de dados é /users/{userId}/...
+                        contactsCollection = collection(db, 'users', user.uid, 'contacts');
+                        categoriesCollection = collection(db, 'users', user.uid, 'categories');
+                        
+                        attachFirestoreListener();
+                        document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
+                        
+                        if (window.innerWidth > 768) {
+                            showMainContentView(welcomeView);
+                        } else {
+                            hideMainContentView();
+                        }
+                    } else {
+                        // O usuário NÃO está aprovado. Mostra a tela de "aguardando aprovação".
+                        authContainer.classList.add('hidden');
+                        appView.classList.remove('hidden');
+                        showMainContentView(pendingApprovalView);
+                        
+                        // Garante que a barra lateral e outras interações fiquem "desligadas"
+                        contactList.innerHTML = '';
+                        categoryFiltersContainer.innerHTML = '';
+                        document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.add('hidden');
+                    }
+                    hideLoader();
+                }).catch(error => {
+                    console.error("Erro ao verificar permissões do usuário:", error);
+                    alert("Ocorreu um erro ao verificar suas permissões. Por favor, tente fazer login novamente.");
+                    signOut(auth);
+                    hideLoader();
+                });
             } else {
+                // O usuário está deslogado.
                 authContainer.classList.remove('hidden');
                 appView.classList.add('hidden');
                 if (unsubscribeContacts) unsubscribeContacts();
                 if (unsubscribeCategories) unsubscribeCategories();
+                
                 contactsCache = [];
                 categoriesCache = [];
                 renderContactList();
                 renderCategoryFilters();
+                
+                userDisplay.classList.add('hidden');
+                userEmailText.textContent = '';
+                document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
+                
+                hideLoader();
             }
-            hideLoader();
         });
 
         authForm.addEventListener('submit', async (e) => {
@@ -1178,13 +1173,17 @@
                     await signInWithEmailAndPassword(auth, email, password);
                 } else {
                     const confirmPassword = document.getElementById('confirm-password').value;
-                    if (password !== confirmPassword) throw { code: 'auth/password-mismatch' };
+                    if (password !== confirmPassword) {
+                        authError.textContent = 'As senhas não coincidem.';
+                        hideLoader();
+                        return;
+                    }
                     await createUserWithEmailAndPassword(auth, email, password);
                 }
             } catch (error) {
-                authError.textContent = getAuthErrorMessage(error.code) || 'As senhas não coincidem.';
+                authError.textContent = getAuthErrorMessage(error.code);
             } finally {
-                hideLoader();
+                // Não escondemos o loader aqui, o onAuthStateChanged fará isso.
             }
         });
         
@@ -1291,8 +1290,6 @@
                 
                 if (contact.data.phone?.mobile) {
                     const actionsDiv = createAndAppend(item, 'div', { classes: ['birthday-item-actions'] });
-                    const generateBtn = createAndAppend(actionsDiv, 'button', { text: '✨ Gerar Mensagem', classes: ['btn', 'btn-sm', 'btn-secondary', 'generate-msg-btn'] });
-                    generateBtn.dataset.contactId = contact.id;
                     const whatsappLink = createAndAppend(actionsDiv, 'a', { classes: ['whatsapp-btn'] });
                     whatsappLink.href = `https://wa.me/55${contact.data.phone.mobile.replace(/\D/g, '')}?text=Feliz%20aniversário!`;
                     whatsappLink.target = '_blank';
@@ -1320,17 +1317,28 @@
         const attachFirestoreListener = () => {
             if (unsubscribeContacts) unsubscribeContacts();
             if (unsubscribeCategories) unsubscribeCategories();
+            
             unsubscribeContacts = onSnapshot(contactsCollection, snapshot => {
                 contactsCache = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
                 renderContactList();
                 if (document.getElementById('birthday-view').classList.contains('hidden') === false) renderBirthdayList();
                 hideLoader();
-            }, error => { console.error("Erro ao ouvir contatos:", error); hideLoader(); });
+            }, error => { 
+                console.error("Erro ao ouvir contatos:", error);
+                // Permissão negada é o erro esperado para usuários não aprovados
+                if(error.code !== 'permission-denied') {
+                    alert("Ocorreu um erro ao carregar seus contatos.");
+                }
+                hideLoader();
+            });
+
             unsubscribeCategories = onSnapshot(categoriesCollection, snapshot => {
                 categoriesCache = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
                 renderCategoryFilters();
                 renderCategoryList();
-            }, error => { console.error("Erro ao ouvir categorias:", error); });
+            }, error => { 
+                console.error("Erro ao ouvir categorias:", error); 
+            });
         };
 
         const saveContact = async (id, data) => {
@@ -1355,9 +1363,10 @@
             if (!itemToDelete.id || !itemToDelete.type) return;
             showLoader();
             try {
-                const collectionRef = itemToDelete.type === 'contact' ? contactsCollection : categoriesCollection;
+                const isContact = itemToDelete.type === 'contact';
+                const collectionRef = isContact ? contactsCollection : categoriesCollection;
                 await deleteDoc(doc(collectionRef, itemToDelete.id));
-                if (itemToDelete.type === 'contact') {
+                if (isContact) {
                     currentContactId = null;
                     showMainContentView(welcomeView);
                 }
@@ -1622,85 +1631,6 @@
         });
         cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
         confirmDeleteBtn.addEventListener('click', deleteItem);
-        
-        optimizeNotesBtn.addEventListener('click', async () => {
-            const contact = contactsCache.find(c => c.id === currentContactId);
-            if (!contact || !contact.data.notes) { alert("Não há notas para otimizar."); return; }
-            optimizeNotesBtn.disabled = true;
-            optimizeNotesBtn.innerHTML = 'Otimizando...';
-            const prompt = `Organize e resuma as seguintes notas sobre um contato profissional. Use bullet points para os pontos chave e formate a informação de forma clara e concisa:\n\n---\n${contact.data.notes}\n---`;
-            try {
-                const result = await callGeminiFunction({ prompt });
-                const optimizedNotes = result.data.text;
-                document.getElementById('detail-notes').textContent = optimizedNotes;
-                await saveContact(currentContactId, { notes: optimizedNotes });
-            } catch (error) {
-                console.error("Erro ao chamar a Cloud Function:", error);
-                alert("Ocorreu um erro ao contatar a IA. Verifique o console para mais detalhes.");
-            } finally {
-                optimizeNotesBtn.disabled = false;
-                optimizeNotesBtn.innerHTML = '✨ Otimizar';
-            }
-        });
-        
-        const handleGenerateMessage = async () => {
-            if (!currentContactForGemini) return;
-            geminiModalInitialForm.classList.add('hidden');
-            geminiModalResult.classList.remove('hidden');
-            geminiModalLoader.classList.remove('hidden');
-            geminiModalTextarea.value = '';
-            const relationship = document.getElementById('gemini-relationship').value;
-            const tone = document.getElementById('gemini-tone').value;
-            const nickname = document.getElementById('gemini-nickname').value.trim();
-            const contactName = `${currentContactForGemini.data.firstName || ''} ${currentContactForGemini.data.lastName || ''}`.trim();
-            const notes = currentContactForGemini.data.notes || 'Nenhuma nota adicional.';
-            lastGeminiPrompt = `Crie uma mensagem de aniversário para ${contactName}. O nosso relacionamento é de ${relationship}. O tom da mensagem deve ser ${tone}. ${nickname ? `Pode usar o apelido '${nickname}'.` : ''} Leve também em consideração estas notas sobre o nosso relacionamento: "${notes}".`;
-            try {
-                const result = await callGeminiFunction({ prompt: lastGeminiPrompt });
-                geminiModalTextarea.value = result.data.text;
-            } catch (error) {
-                console.error("Erro ao chamar a Cloud Function:", error);
-                geminiModalTextarea.value = "Ocorreu um erro ao contatar a IA. Verifique o console para mais detalhes.";
-            } finally {
-                geminiModalLoader.classList.add('hidden');
-            }
-        };
-        
-        geminiModalGenerateBtn.addEventListener('click', handleGenerateMessage);
-        geminiModalRegenerateBtn.addEventListener('click', handleGenerateMessage);
-
-        birthdayList.addEventListener('click', (e) => {
-            const target = e.target.closest('.generate-msg-btn');
-            if (target) {
-                currentContactForGemini = contactsCache.find(c => c.id === target.dataset.contactId);
-                if (!currentContactForGemini) return;
-                geminiModal.classList.remove('hidden');
-                geminiModalInitialForm.classList.remove('hidden');
-                geminiModalResult.classList.add('hidden');
-                geminiModalInitialForm.querySelector('form')?.reset();
-            }
-        });
-        
-        geminiModalCancelBtn.addEventListener('click', () => {
-            geminiModal.classList.add('hidden');
-        });
-
-        geminiModalCloseBtn.addEventListener('click', () => geminiModal.classList.add('hidden'));
-        
-        geminiModalCopyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(geminiModalTextarea.value).then(() => {
-                geminiModalCopyBtn.textContent = 'Copiado!';
-                setTimeout(() => { geminiModalCopyBtn.textContent = 'Copiar'; }, 2000);
-            }).catch(err => console.error('Falha ao copiar: ', err));
-        });
-
-        geminiModalSendBtn.addEventListener('click', () => {
-            if (currentContactForGemini?.data.phone?.mobile) {
-                const mobileNumber = currentContactForGemini.data.phone.mobile.replace(/\D/g, '');
-                const message = encodeURIComponent(geminiModalTextarea.value);
-                window.open(`https://wa.me/55${mobileNumber}?text=${message}`, '_blank');
-            }
-        });
         
         const renderSelectedTags = () => {
             tagInputContainer.querySelectorAll('.tag-input-tag').forEach(tag => tag.remove());
