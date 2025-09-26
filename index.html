@@ -1099,7 +1099,7 @@
         onAuthStateChanged(auth, user => {
             if (user) {
                 // Força a atualização do token para pegar os 'custom claims' (aprovação) mais recentes.
-                user.getIdTokenResult(true).then(idTokenResult => {
+                getIdTokenResult(user, true).then(idTokenResult => {
                     console.log("Token do usuário atualizado, permissões carregadas:", idTokenResult.claims);
                     const isApproved = idTokenResult.claims.approved === true;
 
@@ -1112,9 +1112,9 @@
                         authContainer.classList.add('hidden');
                         appView.classList.remove('hidden');
                         
-                        // IMPORTANTE: A estrutura do seu banco de dados é /users/{userId}/...
-                        contactsCollection = collection(db, 'users', user.uid, 'contacts');
-                        categoriesCollection = collection(db, 'users', user.uid, 'categories');
+                        // IMPORTANTE: A estrutura do seu banco de dados deve ser /contatos/{userId}/lista
+                        contactsCollection = collection(db, 'contatos', user.uid, 'lista');
+                        categoriesCollection = collection(db, 'contatos', user.uid, 'categorias'); // Ajustado para consistência
                         
                         attachFirestoreListener();
                         document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
@@ -1328,6 +1328,9 @@
                 // Permissão negada é o erro esperado para usuários não aprovados
                 if(error.code !== 'permission-denied') {
                     alert("Ocorreu um erro ao carregar seus contatos.");
+                } else {
+                    // Se a permissão for negada, é um usuário não aprovado, então mostramos a tela de pendente.
+                    showMainContentView(pendingApprovalView);
                 }
                 hideLoader();
             });
@@ -1771,3 +1774,4 @@
     </script>
 </body>
 </html>
+
