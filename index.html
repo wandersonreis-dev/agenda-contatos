@@ -86,14 +86,14 @@
 
 
         /* --- ESTRUTURA E LAYOUT --- */
-       .hidden { display: none!important; }
+        .hidden { display: none!important; }
 
         #auth-container {
             width: 100%;
             padding: 20px;
         }
 
-       .auth-box {
+        .auth-box {
             padding: 40px;
             width: 100%;
             max-width: 400px;
@@ -144,7 +144,7 @@
         }
 
         /* --- COMPONENTES --- */
-       .header {
+        .header {
             padding: 16px;
             flex-shrink: 0;
             display: flex;
@@ -156,7 +156,7 @@
 
         .header > input { flex-grow: 1; }
 
-       .btn {
+        .btn {
             padding: 10px 16px;
             border: none;
             border-radius: 6px;
@@ -224,11 +224,11 @@
         }
 
 
-       .form-group {
+        .form-group {
             margin-bottom: 16px;
             text-align: left;
         }
-       .form-group label {
+        .form-group label {
             display: block;
             margin-bottom: 6px;
             font-weight: 500;
@@ -512,7 +512,7 @@
         }
 
         /* Loader e Modal */
-       .loader-container {
+        .loader-container {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -995,7 +995,7 @@
         const userEmailText = document.getElementById('user-email-text');
 
 
-        // --- FUNÇÕES AUXILIARES ---
+        // --- FUNÇÕES AUXILIARES DE UI ---
         const showLoader = () => loader.classList.remove('hidden');
         const hideLoader = () => loader.classList.add('hidden');
 
@@ -1017,18 +1017,8 @@
             currentContactId = null;
             renderContactList();
         }
-
-        const getAuthErrorMessage = (errorCode) => {
-            const messages = {
-                'auth/invalid-email': 'Formato de email inválido.',
-                'auth/user-not-found': 'Nenhuma conta encontrada com este email.',
-                'auth/wrong-password': 'Email ou senha incorretos.',
-                'auth/email-already-in-use': 'Este email já está em uso.',
-                'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.'
-            };
-            return messages[errorCode] || 'Ocorreu um erro. Tente novamente.';
-        }
         
+        // --- FUNÇÕES AUXILIARES ---
         const applyPhoneMask = (event) => {
             let value = event.target.value.replace(/\D/g, '');
             value = value.substring(0, 11);
@@ -1069,7 +1059,7 @@
             authForm.reset();
             authError.textContent = '';
             authTitle.textContent = isLoginMode ? 'Bem-vindo(a)' : 'Crie sua Conta';
-            authSubtitle.textContent = isLoginMode ? 'Faça login para continuar.' : 'É rápido e fácil.';
+            authSubtitle.textContent = isLoginMode ? 'Faça login para gerenciar seus contatos.' : 'É rápido e fácil.';
             authSubmitBtn.textContent = isLoginMode ? 'Entrar' : 'Cadastrar';
             confirmPasswordGroup.classList.toggle('hidden', isLoginMode);
             loginToggleText.classList.toggle('hidden', !isLoginMode);
@@ -1094,99 +1084,173 @@
         });
 
         // =========================================================================
-        // AJUSTE DE SEGURANÇA: onAuthStateChanged COM VERIFICAÇÃO DE APROVAÇÃO
+        // --- CORREÇÃO INÍCIO: CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO ---
+        // Este bloco substitui a lógica antiga para resolver o problema do token em cache.
+        // Ele se torna o único "porteiro" do aplicativo.
         // =========================================================================
-        onAuthStateChanged(auth, user => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Força a atualização do token para pegar os 'custom claims' (aprovação) mais recentes.
-                getIdTokenResult(user, true).then(idTokenResult => {
-                    console.log("Token do usuário atualizado, permissões carregadas:", idTokenResult.claims);
-                    const isApproved = idTokenResult.claims.approved === true;
+                // 1. USUÁRIO ESTÁ LOGADO - Inicia a verificação de permissões.
+                console.log("Usuário detectado:", user.email);
+                showLoader(); // Mostra o loader durante a verificação.
 
-                    // Exibe o email do usuário logado no menu
-                    userEmailText.textContent = user.email;
-                    userDisplay.classList.remove('hidden');
-                    
-                    if (isApproved) {
-                        // O usuário está APROVADO, inicia o aplicativo normalmente.
+                // 2. FORÇA A ATUALIZAÇÃO DO TOKEN para buscar as permissões mais recentes do servidor.
+                // O `true` é a parte mais importante para resolver o problema do cache.
+                getIdTokenResult(user, true)
+                    .then((idTokenResult) => {
+                        const isApproved = idTokenResult.claims.approved === true;
+                        console.log("Permissões verificadas. Aprovado:", isApproved);
+
+                        // Mostra o email do usuário na interface
+                        userEmailText.textContent = user.email;
+                        userDisplay.classList.remove('hidden');
+                        
+                        // Esconde a tela de login/cadastro e mostra a área principal do app.
                         authContainer.classList.add('hidden');
                         appView.classList.remove('hidden');
-                        
-                        // IMPORTANTE: A estrutura do seu banco de dados deve ser /contatos/{userId}/lista
-                        contactsCollection = collection(db, 'contatos', user.uid, 'lista');
-                        categoriesCollection = collection(db, 'contatos', user.uid, 'categorias'); // Ajustado para consistência
-                        
-                        attachFirestoreListener();
-                        document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
-                        
-                        if (window.innerWidth > 768) {
-                            showMainContentView(welcomeView);
+
+                        if (isApproved) {
+                            // 3a. APROVADO! Inicia o aplicativo normalmente.
+                            console.log("Acesso concedido.");
+                            
+                            // Define as coleções do Firestore para este usuário.
+                            contactsCollection = collection(db, 'contatos', user.uid, 'lista');
+                            categoriesCollection = collection(db, 'contatos', user.uid, 'categorias');
+                            
+                            // Inicia a escuta por atualizações em tempo real nos dados.
+                            attachFirestoreListener();
+                            
+                            // Garante que os botões de ação na barra lateral estejam visíveis.
+                             document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
+                            
+                            // Mostra a tela de boas-vindas.
+                            if (window.innerWidth > 768) {
+                                showMainContentView(welcomeView);
+                            } else {
+                                hideMainContentView();
+                            }
                         } else {
-                            hideMainContentView();
+                            // 3b. NÃO APROVADO! Mostra a tela de "Aguardando Aprovação".
+                            console.log("Acesso pendente. Mostrando tela de espera.");
+                            showMainContentView(pendingApprovalView);
+                            
+                            // Desativa as interações da barra lateral.
+                            contactList.innerHTML = '';
+                            categoryFiltersContainer.innerHTML = '';
+                            document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.add('hidden');
                         }
-                    } else {
-                        // O usuário NÃO está aprovado. Mostra a tela de "aguardando aprovação".
-                        authContainer.classList.add('hidden');
-                        appView.classList.remove('hidden');
-                        showMainContentView(pendingApprovalView);
-                        
-                        // Garante que a barra lateral e outras interações fiquem "desligadas"
-                        contactList.innerHTML = '';
-                        categoryFiltersContainer.innerHTML = '';
-                        document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.add('hidden');
-                    }
-                    hideLoader();
-                }).catch(error => {
-                    console.error("Erro ao verificar permissões do usuário:", error);
-                    alert("Ocorreu um erro ao verificar suas permissões. Por favor, tente fazer login novamente.");
-                    signOut(auth);
-                    hideLoader();
-                });
+                    })
+                    .catch((error) => {
+                        // 4. ERRO CRÍTICO ao verificar permissões. Desloga o usuário por segurança.
+                        console.error("Erro crítico ao verificar token e permissões:", error);
+                        alert("Ocorreu um erro ao verificar suas permissões. Por favor, tente fazer login novamente.");
+                        signOut(auth); // Desloga o usuário para evitar um estado inconsistente.
+                    })
+                    .finally(() => {
+                        // Esconde o loader após a verificação terminar (sucesso ou falha).
+                        hideLoader();
+                    });
+
             } else {
-                // O usuário está deslogado.
+                // 5. NENHUM USUÁRIO LOGADO - Garante que a tela de login seja exibida.
+                console.log("Nenhum usuário logado. Exibindo tela de login.");
+                
+                // Mostra a tela de autenticação e esconde o app.
                 authContainer.classList.remove('hidden');
                 appView.classList.add('hidden');
+                
+                // Para a escuta de dados para evitar erros.
                 if (unsubscribeContacts) unsubscribeContacts();
                 if (unsubscribeCategories) unsubscribeCategories();
                 
+                // Limpa caches de dados.
                 contactsCache = [];
                 categoriesCache = [];
+                
+                // Limpa a interface do usuário.
                 renderContactList();
                 renderCategoryFilters();
-                
                 userDisplay.classList.add('hidden');
                 userEmailText.textContent = '';
-                document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
                 
                 hideLoader();
             }
         });
+        
+        // =========================================================================
+        // --- CORREÇÃO FIM: CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO ---
+        // =========================================================================
 
+
+        // =========================================================================
+        // --- CORREÇÃO INÍCIO: MELHORIA NO FORMULÁRIO DE LOGIN E CADASTRO ---
+        // Este bloco melhora o feedback para o usuário durante o login e o cadastro.
+        // =========================================================================
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             showLoader();
             authError.textContent = '';
+            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            
             try {
                 if (isLoginMode) {
+                    // --- FLUXO DE LOGIN ---
                     await signInWithEmailAndPassword(auth, email, password);
+                    // O 'onAuthStateChanged' agora cuida de tudo após o sucesso.
+                    // Não precisamos esconder o loader aqui, o onAuthStateChanged fará isso.
                 } else {
+                    // --- FLUXO DE CADASTRO ---
                     const confirmPassword = document.getElementById('confirm-password').value;
                     if (password !== confirmPassword) {
-                        authError.textContent = 'As senhas não coincidem.';
-                        hideLoader();
-                        return;
+                        throw new Error("As senhas não coincidem.");
                     }
+                    if (password.length < 6) {
+                        throw new Error("A senha deve ter pelo menos 6 caracteres.");
+                    }
+
                     await createUserWithEmailAndPassword(auth, email, password);
+                    // SUCESSO NO CADASTRO!
+                    // O 'onAuthStateChanged' será acionado e mostrará a tela de espera correta.
+                    // Não precisamos fazer nada aqui, pois o listener central já cuida disso.
+                    // O loader será escondido pelo onAuthStateChanged.
                 }
             } catch (error) {
-                authError.textContent = getAuthErrorMessage(error.code);
-            } finally {
-                // Não escondemos o loader aqui, o onAuthStateChanged fará isso.
+                hideLoader(); // IMPORTANTE: Esconder o loader em caso de erro.
+                console.error("Erro no formulário de autenticação:", error);
+                
+                // Lógica para exibir mensagens de erro específicas.
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        authError.textContent = "Nenhum usuário encontrado com este e-mail.";
+                        break;
+                    case 'auth/wrong-password':
+                        authError.textContent = "Senha incorreta. Por favor, tente novamente.";
+                        break;
+                    case 'auth/invalid-email':
+                        authError.textContent = "O formato do e-mail é inválido.";
+                        break;
+                    case 'auth/email-already-in-use':
+                        authError.textContent = "Este e-mail já está em uso por outra conta.";
+                        break;
+                    case 'auth/weak-password':
+                         authError.textContent = "A senha deve ter pelo menos 6 caracteres.";
+                         break;
+                    case 'auth/too-many-requests':
+                        authError.textContent = "Acesso bloqueado temporariamente. Tente mais tarde.";
+                        break;
+                    default:
+                        // Usa a mensagem de erro customizada (ex: "As senhas não coincidem") ou uma genérica.
+                        authError.textContent = error.message || "Ocorreu um erro inesperado.";
+                }
             }
         });
-        
+        // =========================================================================
+        // --- CORREÇÃO FIM: MELHORIA NO FORMULÁRIO DE LOGIN E CADASTRO ---
+        // =========================================================================
+
+
         resetPasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             showLoader();
@@ -1197,8 +1261,14 @@
                 resetMessage.textContent = 'Link de redefinição enviado para o seu email.';
                 resetMessage.classList.add('success-message');
             } catch (error) {
-                resetMessage.textContent = getAuthErrorMessage(error.code);
-                resetMessage.classList.remove('success-message');
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        resetMessage.textContent = "Nenhum usuário encontrado com este e-mail.";
+                        break;
+                    default:
+                        resetMessage.textContent = "Ocorreu um erro. Tente novamente.";
+                }
+                 resetMessage.classList.remove('success-message');
             } finally {
                 hideLoader();
             }
@@ -1322,17 +1392,12 @@
                 contactsCache = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
                 renderContactList();
                 if (document.getElementById('birthday-view').classList.contains('hidden') === false) renderBirthdayList();
-                hideLoader();
             }, error => { 
                 console.error("Erro ao ouvir contatos:", error);
-                // Permissão negada é o erro esperado para usuários não aprovados
                 if(error.code !== 'permission-denied') {
                     alert("Ocorreu um erro ao carregar seus contatos.");
-                } else {
-                    // Se a permissão for negada, é um usuário não aprovado, então mostramos a tela de pendente.
-                    showMainContentView(pendingApprovalView);
                 }
-                hideLoader();
+                // Não precisamos mais tratar o 'permission-denied' aqui, pois o onAuthStateChanged já cuida disso.
             });
 
             unsubscribeCategories = onSnapshot(categoriesCollection, snapshot => {
@@ -1774,4 +1839,3 @@
     </script>
 </body>
 </html>
-
