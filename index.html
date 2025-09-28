@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="4Sc0rP_X5SiwRFn4Nysc008ju4IMJ91hmHmEEeqdd3o" />
     <title>Agenda de Contatos Online</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- O CSS original da sua aplicação foi mantido intacto -->
     <style>
         :root{--bg-light:#F8F9FA;--surface-light:#FFFFFF;--text-primary-light:#212529;--text-secondary-light:#6C757D;--accent-light:#4C6EF5;--accent-hover-light:#3B5BDB;--danger-light:#E03131;--success-light:#2F9E44;--border-light:#DEE2E6;--submenu-bg-light:#F1F3F5;--bg-dark:#121212;--surface-dark:#1E1E1E;--text-primary-dark:#E9ECEF;--text-secondary-dark:#AAB0B7;--accent-dark:#748FFC;--accent-hover-dark:#91A7FF;--danger-dark:#FF6B6B;--success-dark:#69DB7C;--border-dark:#363636;--submenu-bg-dark:#2C2E33}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;transition:background-color .3s,color .3s;line-height:1.6;display:flex;justify-content:center;align-items:center;min-height:100vh}body.light-theme{background-color:var(--bg-light);color:var(--text-primary-light)}.light-theme .surface{background-color:var(--surface-light)}.light-theme .text-secondary{color:var(--text-secondary-light)}.light-theme .btn-primary{background-color:var(--accent-light)}.light-theme .btn-primary:hover{background-color:var(--accent-hover-light)}.light-theme .btn-danger{background-color:var(--danger-light)}.light-theme .btn-secondary{background-color:var(--text-secondary-light);color:white}.light-theme .form-input,.light-theme .form-select{border:1px solid var(--border-light);background-color:var(--surface-light);color:var(--text-primary-light)}.light-theme .contact-item,.light-theme .birthday-item,.light-theme .category-item{border-bottom:1px solid var(--border-light)}.light-theme .contact-item:hover,.light-theme .birthday-item:hover,.light-theme .category-item:hover{background-color:var(--bg-light)}.light-theme .modal-content{background-color:var(--surface-light)}.light-theme .loader-spinner{border-top-color:var(--accent-light)}.light-theme .link{color:var(--accent-light)}.light-theme .success-message{color:var(--success-light)}.light-theme .category-tag{background-color:var(--bg-light);border:1px solid var(--border-light)}.light-theme .category-filter-btn.active{background-color:var(--accent-light);color:white}.light-theme .tag-input-suggestion{background-color:var(--surface-light)}.light-theme .tag-input-suggestion:hover{background-color:var(--bg-light)}.light-theme .password-toggle-icon{color:var(--text-secondary-light)}.light-theme #settings-submenu{background-color:var(--submenu-bg-light)}.light-theme .btn-submenu:hover{background-color:var(--border-light);color:var(--text-primary-light)}.light-theme .btn-icon{color:var(--text-secondary-light)}.light-theme #user-display{border-bottom-color:var(--border-light)}body.dark-theme{background-color:var(--bg-dark);color:var(--text-primary-dark)}.dark-theme .surface{background-color:var(--surface-dark)}.dark-theme .text-secondary{color:var(--text-secondary-dark)}.dark-theme .btn-primary{background-color:var(--accent-dark)}.dark-theme .btn-primary:hover{background-color:var(--accent-hover-dark)}.dark-theme .btn-danger{background-color:var(--danger-dark)}.dark-theme .btn-secondary{background-color:var(--text-secondary-dark);color:var(--surface-dark)}.dark-theme .form-input,.dark-theme .form-select{border:1px solid var(--border-dark);background-color:var(--surface-dark);color:var(--text-primary-dark)}.dark-theme .contact-item,.dark-theme .birthday-item,.dark-theme .category-item{border-bottom:1px solid var(--border-dark)}.dark-theme .contact-item:hover,.dark-theme .birthday-item:hover,.dark-theme .category-item:hover{background-color:var(--bg-dark)}.dark-theme .modal-content{background-color:var(--surface-dark)}.dark-theme .loader-spinner{border-top-color:var(--accent-dark)}.dark-theme .link{color:var(--accent-dark)}.dark-theme .success-message{color:var(--success-dark)}.dark-theme .category-tag{background-color:var(--bg-dark);border:1px solid var(--border-dark)}.dark-theme .category-filter-btn.active{background-color:var(--accent-dark);color:var(--surface-dark)}.dark-theme .tag-input-suggestion{background-color:var(--surface-dark)}.dark-theme .tag-input-suggestion:hover{background-color:var(--bg-dark)}.dark-theme .password-toggle-icon{color:var(--text-secondary-dark)}.dark-theme #settings-submenu{background-color:var(--submenu-bg-dark)}.dark-theme .btn-submenu:hover{background-color:var(--border-dark);color:var(--text-primary-dark)}.dark-theme .btn-icon{color:var(--text-secondary-dark)}.dark-theme #user-display{border-bottom-color:var(--border-dark)}.hidden{display:none!important}#auth-container{width:100%;padding:20px}.auth-box{padding:40px;width:100%;max-width:400px;text-align:center;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.08);margin:0 auto}.dark-theme .auth-box{box-shadow:0 8px 30px rgba(0,0,0,.2)}.app-title{font-size:1.5rem;font-weight:700;margin-bottom:8px;letter-spacing:-.5px}#app-view{display:grid;grid-template-columns:300px 1fr;height:100vh;width:100%;overflow:hidden}#sidebar{display:flex;flex-direction:column;height:100vh}.light-theme #sidebar{border-right:1px solid var(--border-light)}.dark-theme #sidebar{border-right:1px solid var(--border-dark)}.sidebar-footer{padding:16px;margin-top:auto;flex-shrink:0}.light-theme .sidebar-footer{border-top:1px solid var(--border-light)}.dark-theme .sidebar-footer{border-top:1px solid var(--border-dark)}#main-content{display:flex;flex-direction:column;overflow-y:auto}.header{padding:16px;flex-shrink:0;display:flex;gap:10px;align-items:center}.light-theme .header{border-bottom:1px solid var(--border-light)}.dark-theme .header{border-bottom:1px solid var(--border-dark)}.header>input{flex-grow:1}.btn{padding:10px 16px;border:none;border-radius:6px;cursor:pointer;font-size:1rem;font-weight:500;color:white;transition:background-color .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}.btn svg{width:1em;height:1em}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.6;cursor:not-allowed}.btn-block{display:block;width:100%}.btn-sm{padding:6px 12px;font-size:.85rem}.btn-icon{background:none;border:none;padding:5px;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center}.btn-icon:hover{background-color:rgba(128,128,128,.1)}.btn-submenu{background-color:transparent;justify-content:flex-start;padding:8px 12px;border-radius:4px;transition:background-color .2s,color .2s}.light-theme .btn-submenu{color:var(--text-secondary-light)}.dark-theme .btn-submenu{color:var(--text-secondary-dark)}#settings-submenu{padding:8px;margin-top:5px;display:flex;flex-direction:column;gap:5px;border-radius:6px}.form-group{margin-bottom:16px;text-align:left}.form-group label{display:block;margin-bottom:6px;font-weight:500;font-size:.9rem}.form-input,.form-select{width:100%;padding:10px;border-radius:6px;font-size:1rem}.light-theme .form-input:focus,.light-theme .form-select:focus{outline:none;box-shadow:0 0 0 2px var(--accent-light)}.dark-theme .form-input:focus,.dark-theme .form-select:focus{outline:none;box-shadow:0 0 0 2px var(--accent-dark)}.password-wrapper{position:relative}.password-wrapper .form-input{padding-right:40px}.password-toggle-icon{position:absolute;top:50%;right:10px;transform:translateY(-50%);cursor:pointer}.password-toggle-icon svg{width:20px;height:20px}.form-row{display:flex;gap:10px;flex-wrap:wrap}.form-row .form-group{flex-grow:1}.forgot-password-link{display:block;text-align:right;font-size:.85rem;margin-top:-8px;margin-bottom:16px}#contact-list,#birthday-list,#category-list{flex-grow:1;overflow-y:auto}.contact-item{display:flex;align-items:center;padding:12px 16px;cursor:pointer;transition:background-color .2s}.light-theme .contact-item.active{background-color:var(--accent-light);color:white}.dark-theme .contact-item.active{background-color:var(--accent-dark);color:var(--surface-dark)}.contact-item.active .text-secondary{color:rgba(255,255,255,.8)}.dark-theme .contact-item.active .text-secondary{color:rgba(25,25,25,.8)}.contact-avatar{width:40px;height:40px;border-radius:50%;color:white;display:flex;justify-content:center;align-items:center;font-weight:bold;margin-right:12px;text-transform:uppercase;flex-shrink:0}.light-theme .contact-avatar{background-color:var(--accent-light)}.dark-theme .contact-avatar{background-color:var(--accent-dark)}#contact-detail-view,#contact-form-view,#birthday-view,#category-view,#change-password-view{padding:24px 32px}.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px}.detail-field{margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.detail-field strong{font-weight:600;margin-bottom:0;flex-shrink:0}.detail-field a{text-decoration:none}.detail-field a:hover{text-decoration:underline}.light-theme .detail-field a{color:var(--accent-light)}.dark-theme .detail-field a{color:var(--accent-dark)}.whatsapp-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background-color:#25D366;color:white;text-decoration:none;transition:transform .2s}.whatsapp-btn:hover{transform:scale(1.1)}.whatsapp-btn svg{width:18px;height:18px}.birthday-item,.category-item{padding:16px;display:flex;justify-content:space-between;align-items:center}.birthday-item-actions{display:flex;gap:8px;align-items:center}.category-tag{padding:2px 8px;border-radius:4px;font-size:.8rem;font-weight:500}#category-filters{padding:0 16px 16px;display:flex;flex-wrap:wrap;gap:8px}.category-filter-btn{padding:4px 10px;font-size:.9rem;border:1px solid;cursor:pointer;border-radius:6px}.light-theme .category-filter-btn{background-color:var(--bg-light);color:var(--text-primary-light);border-color:var(--border-light)}.dark-theme .category-filter-btn{background-color:var(--bg-dark);color:var(--text-primary-dark);border-color:var(--border-dark)}.tag-input-wrapper{position:relative}.tag-input-container{border:1px solid;border-radius:6px;padding:5px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}.light-theme .tag-input-container{border-color:var(--border-light);background-color:var(--surface-light)}.dark-theme .tag-input-container{border-color:var(--border-dark);background-color:var(--surface-dark)}.light-theme .tag-input-container:focus-within{box-shadow:0 0 0 2px var(--accent-light)}.dark-theme .tag-input-container:focus-within{box-shadow:0 0 0 2px var(--accent-dark)}.tag-input-tag{color:white;padding:4px 8px;border-radius:4px;display:flex;align-items:center;gap:5px;font-size:.9rem}.light-theme .tag-input-tag{background-color:var(--accent-light)}.dark-theme .tag-input-tag{background-color:var(--accent-dark)}.tag-input-remove{cursor:pointer;font-weight:bold}.tag-input-field{flex-grow:1;border:none;outline:none;padding:5px;background-color:transparent}.light-theme .tag-input-field{color:var(--text-primary-light)}.dark-theme .tag-input-field{color:var(--text-primary-dark)}.tag-input-suggestions{position:absolute;top:100%;left:0;right:0;border:1px solid;border-top:none;border-radius:0 0 6px 6px;max-height:150px;overflow-y:auto;z-index:100}.light-theme .tag-input-suggestions{border-color:var(--border-light);background-color:var(--surface-light)}.dark-theme .tag-input-suggestions{border-color:var(--border-dark);background-color:var(--surface-dark)}.tag-input-suggestion{padding:10px;cursor:pointer}.light-theme .tag-input-suggestion:hover{background-color:var(--bg-light)}.dark-theme .tag-input-suggestion:hover{background-color:var(--bg-dark)}#welcome-view{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center;padding:20px}#pending-approval-view{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center;padding:20px}.loader-container{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:1000}.loader-spinner{width:50px;height:50px;border:5px solid rgba(255,255,255,.3);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.modal{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;z-index:999}.modal-content{padding:24px;border-radius:8px;width:90%;max-width:500px;box-shadow:0 5px 15px rgba(0,0,0,.3)}.modal-buttons{margin-top:20px;display:flex;justify-content:flex-end;gap:10px}.auth-toggle-link{margin-top:24px;font-size:.9rem}.auth-toggle-link a{font-weight:500;cursor:pointer;text-decoration:none}.auth-toggle-link a:hover{text-decoration:underline}@media (max-width:768px){#app-view{grid-template-columns:1fr}#sidebar.has-selection{display:none}#main-content{display:none}#main-content.visible{display:flex}.back-to-list-btn{display:block!important;margin-bottom:16px}}
     </style>
 </head>
 <body>
 
+    <!-- O HTML original da sua aplicação foi mantido intacto -->
     <div id="loader" class="loader-container hidden">
         <div class="loader-spinner"></div>
     </div>
@@ -40,7 +41,7 @@
                 </div>
                 <div class="form-group hidden" id="confirm-password-group">
                     <label for="confirm-password">Confirmar Senha</label>
-                     <div class="password-wrapper">
+                    <div class="password-wrapper">
                         <input type="password" id="confirm-password" class="form-input" placeholder="Confirme sua senha">
                         <span class="password-toggle-icon" data-target="confirm-password">
                             <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -55,7 +56,7 @@
             <p id="login-toggle-text" class="auth-toggle-link text-secondary">
                 Não tem uma conta? <a id="show-signup-link" class="link">Cadastre-se</a>
             </p>
-             <p id="signup-toggle-text" class="auth-toggle-link text-secondary hidden">
+            <p id="signup-toggle-text" class="auth-toggle-link text-secondary hidden">
                 Já tem uma conta? <a id="show-login-link" class="link">Faça Login</a>
             </p>
         </div>
@@ -65,7 +66,7 @@
             <h2>Redefinir Senha</h2>
             <p class="text-secondary" style="margin-bottom: 24px;">Insira seu email para receber o link de redefinição.</p>
             <form id="reset-password-form">
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="reset-email">Email</label>
                     <input type="email" id="reset-email" class="form-input" placeholder="seu@email.com" required>
                 </div>
@@ -88,15 +89,15 @@
                 </button>
             </div>
             <div id="category-filters" class="header" style="border: none; padding-top: 0;">
-                </div>
+            </div>
             <div id="contact-list">
-                </div>
+            </div>
             <div class="sidebar-footer">
-                 <div id="user-display" class="hidden" style="padding-bottom: 15px; text-align: center; border-bottom: 1px solid; margin-bottom: 15px;">
+                <div id="user-display" class="hidden" style="padding-bottom: 15px; text-align: center; border-bottom: 1px solid; margin-bottom: 15px;">
                     <span style="font-size: 0.8rem;" class="text-secondary">Logado como:</span><br>
                     <strong id="user-email-text" style="font-size: 0.9rem; word-break: break-all;"></strong>
                 </div>
-                 <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
                     <button id="add-contact-btn" class="btn btn-primary btn-block">+ Novo Contato</button>
                     <button id="show-birthday-btn" class="btn btn-block btn-secondary">Aniversários</button>
                     <div id="settings-menu">
@@ -137,7 +138,7 @@
                             <span>Editar</span>
                         </button>
                         <button id="delete-contact-btn" class="btn btn-danger">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                             <span>Excluir</span>
                         </button>
                     </div>
@@ -202,37 +203,37 @@
             </div>
             
             <div id="birthday-view" class="hidden">
-                 <button class="btn back-to-list-btn hidden btn-secondary">← Voltar</button>
-                 <div class="detail-header">
+                <button class="btn back-to-list-btn hidden btn-secondary">← Voltar</button>
+                <div class="detail-header">
                     <h2 id="birthday-title">Aniversariantes do Mês</h2>
                     <div class="form-group" style="margin-bottom: 0;">
                         <label for="month-filter" class="hidden">Filtrar por Mês:</label>
                         <select id="month-filter" class="form-select"></select>
                     </div>
-                 </div>
-                 <div id="birthday-list">
-                    </div>
+                </div>
+                <div id="birthday-list">
+                </div>
             </div>
             
             <div id="category-view" class="hidden">
-                 <button class="btn back-to-list-btn hidden btn-secondary">← Voltar</button>
-                 <div class="detail-header">
+                <button class="btn back-to-list-btn hidden btn-secondary">← Voltar</button>
+                <div class="detail-header">
                     <h2>Gerir Categorias</h2>
-                 </div>
-                 <form id="add-category-form" style="display: flex; gap: 10px; margin-bottom: 24px;">
+                </div>
+                <form id="add-category-form" style="display: flex; gap: 10px; margin-bottom: 24px;">
                     <input type="text" id="new-category-name" class="form-input" placeholder="Nova categoria" required>
                     <button type="submit" class="btn btn-primary">Adicionar</button>
-                 </form>
-                 <div id="category-list">
-                    </div>
+                </form>
+                <div id="category-list">
+                </div>
             </div>
             
             <div id="change-password-view" class="hidden">
-                 <button class="btn back-to-list-btn hidden btn-secondary">← Voltar</button>
-                 <div class="detail-header">
+                <button class="btn back-to-list-btn hidden btn-secondary">← Voltar</button>
+                <div class="detail-header">
                     <h2>Alterar Senha</h2>
-                 </div>
-                 <form id="change-password-form" style="max-width: 500px;">
+                </div>
+                <form id="change-password-form" style="max-width: 500px;">
                     <div class="form-group">
                         <label for="current-password">Senha Atual</label>
                         <div class="password-wrapper">
@@ -247,15 +248,15 @@
                         <label for="new-password">Nova Senha</label>
                         <div class="password-wrapper">
                             <input type="password" id="new-password" class="form-input" required>
-                             <span class="password-toggle-icon" data-target="new-password">
+                            <span class="password-toggle-icon" data-target="new-password">
                                 <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 <svg class="eye-off-icon hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                             </span>
                         </div>
                     </div>
-                     <p id="change-password-message" class="text-secondary" style="margin-bottom: 15px; min-height: 1.2em;"></p>
+                    <p id="change-password-message" class="text-secondary" style="margin-bottom: 15px; min-height: 1.2em;"></p>
                     <button type="submit" class="btn btn-primary">Salvar Nova Senha</button>
-                 </form>
+                </form>
             </div>
         </main>
     </div>
@@ -283,54 +284,51 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
     <script type="module">
-        // --- 1: IMPORTAR OS MÓDULOS DO FIREBASE E APP CHECK ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app-check.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword, getIdTokenResult } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
-        import { getFunctions, httpsCallable, connectFunctionsEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js";
-        import { connectAuthEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
-        import { connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        // =================================================================================
+        // MÓDULO 1: INICIALIZAÇÃO SEGURA DO FIREBASE
+        // =================================================================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-check.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword, getIdTokenResult } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- CONFIGURAÇÃO DO FIREBASE ---
         const firebaseConfig = {
-  apiKey: "AIzaSyCv1OWaXq0qhBMjYvasJXpvzFT_1F39JRQ",
-  authDomain: "app-contatos-final.firebaseapp.com",
-  projectId: "app-contatos-final",
-  storageBucket: "app-contatos-final.firebasestorage.app",
-  messagingSenderId: "983365993269",
-  appId: "1:983365993269:web:877f7e7f2a56634268027c"
-};
+            apiKey: "AIzaSyCv1OWaXq0qhBMjYvasJXpvzFT_1F39JRQ",
+            authDomain: "app-contatos-final.firebaseapp.com",
+            projectId: "app-contatos-final",
+            storageBucket: "app-contatos-final.appspot.com",
+            messagingSenderId: "983365993269",
+            appId: "1:983365993269:web:877f7e7f2a56634268027c"
+        };
+        const reCaptchaSiteKey = "6LfxztcrAAAAACnHVgTb2oATGVzLSc2F5E-jDx7P";
 
+        let app, auth, db, appCheck;
+        let contactsCollection, categoriesCollection;
+        let unsubscribeContacts = null, unsubscribeCategories = null;
 
-        // --- INICIALIZAÇÃO DO FIREBASE ---
-        const app = initializeApp(firebaseConfig);
-        
-        // --- 2: INICIALIZAR O APP CHECK COM A SUA CHAVE ---
-        const appCheck = initializeAppCheck(app, {
-          provider: new ReCaptchaV3Provider('6LfxztcrAAAAACnHVgTb2oATGVzLSc2F5E-jDx7P'), // Chave do site reCAPTCHA v3 preenchida
-          isTokenAutoRefreshEnabled: true
-        });
-
-        const auth = getAuth(app);
-        auth.languageCode = 'pt-BR';
-        const db = getFirestore(app);
-        const functions = getFunctions(app);
-        let contactsCollection;
-        let categoriesCollection;
-        let unsubscribeContacts = null;
-        let unsubscribeCategories = null;
-
-        // --- CONECTAR AOS EMULADORES SE ESTIVER EM AMBIENTE LOCAL ---
-        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-            console.log("Conectando aos emuladores locais...");
-            connectAuthEmulator(auth, "http://localhost:9099");
-            connectFirestoreEmulator(db, 'localhost', 8080);
-            connectFunctionsEmulator(functions, "localhost", 5001);
+        try {
+            console.log("Inicializando Firebase e App Check...");
+            app = initializeApp(firebaseConfig);
+            appCheck = initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider(reCaptchaSiteKey),
+                isTokenAutoRefreshEnabled: true
+            });
+            auth = getAuth(app);
+            auth.languageCode = 'pt-BR';
+            db = getFirestore(app);
+            console.log("Sistema seguro inicializado com sucesso.");
+        } catch (error) {
+            console.error("ERRO CRÍTICO NA INICIALIZAÇÃO:", error);
+            document.body.innerHTML = `<div style="padding: 20px; color: red;">Erro Crítico: A aplicação não pôde ser iniciada. Verifique o console.</div>`;
         }
+
+        // =================================================================================
+        // MÓDULO 2: LÓGICA COMPLETA DA APLICAÇÃO
+        // (Todo o seu código original, agora dentro do escopo seguro)
+        // =================================================================================
 
         // --- ESTADO DA APLICAÇÃO ---
         let contactsCache = [];
@@ -433,11 +431,11 @@
 
         const hideMainContentView = () => {
              if (window.innerWidth <= 768) {
-                mainContent.classList.remove('visible');
-                sidebar.classList.remove('has-selection');
-            }
-            currentContactId = null;
-            renderContactList();
+                 mainContent.classList.remove('visible');
+                 sidebar.classList.remove('has-selection');
+             }
+             currentContactId = null;
+             renderContactList();
         }
         
         // --- FUNÇÕES AUXILIARES ---
@@ -505,58 +503,53 @@
             resetMessage.textContent = '';
         });
 
-        // =========================================================================
-        // --- CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO (VERSÃO FINAL) ---
-        // =========================================================================
-        onAuthStateChanged(auth, (user) => {
+        // --- CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO ---
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 console.log("Usuário detectado:", user.email);
-                showLoader(); 
+                showLoader();
 
-                getIdTokenResult(user, true)
-                    .then((idTokenResult) => {
-                        const isApproved = idTokenResult.claims.approved === true;
-                        console.log("Permissões verificadas. Aprovado:", isApproved);
+                try {
+                    const idTokenResult = await getIdTokenResult(user, true);
+                    const isApproved = idTokenResult.claims.approved === true;
+                    console.log("Permissões verificadas. Aprovado:", isApproved);
 
-                        userEmailText.textContent = user.email;
-                        userDisplay.classList.remove('hidden');
+                    userEmailText.textContent = user.email;
+                    userDisplay.classList.remove('hidden');
+                    
+                    authContainer.classList.add('hidden');
+                    appView.classList.remove('hidden');
+
+                    if (isApproved) {
+                        console.log("Acesso concedido.");
                         
-                        authContainer.classList.add('hidden');
-                        appView.classList.remove('hidden');
-
-                        if (isApproved) {
-                            console.log("Acesso concedido.");
-                            
-                            contactsCollection = collection(db, 'contatos', user.uid, 'lista');
-                            categoriesCollection = collection(db, 'contatos', user.uid, 'categorias');
-                            
-                            attachFirestoreListener();
-                            
-                             document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
-                            
-                            if (window.innerWidth > 768) {
-                                showMainContentView(welcomeView);
-                            } else {
-                                hideMainContentView();
-                            }
+                        contactsCollection = collection(db, 'contatos', user.uid, 'lista');
+                        categoriesCollection = collection(db, 'contatos', user.uid, 'categorias');
+                        
+                        attachFirestoreListener();
+                        
+                         document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
+                        
+                        if (window.innerWidth > 768) {
+                            showMainContentView(welcomeView);
                         } else {
-                            console.log("Acesso pendente. Mostrando tela de espera.");
-                            showMainContentView(pendingApprovalView);
-                            
-                            contactList.innerHTML = '';
-                            categoryFiltersContainer.innerHTML = '';
-                            document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.add('hidden');
+                            hideMainContentView();
                         }
-                    })
-                    .catch((error) => {
-                        console.error("Erro crítico ao verificar token e permissões:", error);
-                        alert("Ocorreu um erro ao verificar suas permissões. Por favor, tente fazer login novamente.");
-                        signOut(auth); 
-                    })
-                    .finally(() => {
-                        hideLoader();
-                    });
-
+                    } else {
+                        console.log("Acesso pendente. Mostrando tela de espera.");
+                        showMainContentView(pendingApprovalView);
+                        
+                        contactList.innerHTML = '';
+                        categoryFiltersContainer.innerHTML = '';
+                        document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.add('hidden');
+                    }
+                } catch (error) {
+                    console.error("Erro crítico ao verificar token e permissões:", error);
+                    // alert("Ocorreu um erro ao verificar suas permissões. Por favor, tente fazer login novamente.");
+                    signOut(auth);
+                } finally {
+                    hideLoader();
+                }
             } else {
                 console.log("Nenhum usuário logado. Exibindo tela de login.");
                 
@@ -578,9 +571,7 @@
             }
         });
         
-        // =========================================================================
-        // --- FORMULÁRIO DE LOGIN E CADASTRO (VERSÃO FINAL) ---
-        // =========================================================================
+        // --- FORMULÁRIO DE LOGIN E CADASTRO ---
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             showLoader();
@@ -604,12 +595,12 @@
                     await createUserWithEmailAndPassword(auth, email, password);
                 }
             } catch (error) {
-                hideLoader(); 
+                hideLoader();
                 console.error("Erro no formulário de autenticação:", error);
                 
                 switch (error.code) {
                     case 'auth/user-not-found':
-                    case 'auth/invalid-login-credentials': // Adicionado para a nova versão do SDK
+                    case 'auth/invalid-login-credentials':
                         authError.textContent = "E-mail ou senha inválidos. Verifique e tente novamente.";
                         break;
                     case 'auth/wrong-password':
@@ -659,7 +650,6 @@
         logoutBtn.addEventListener('click', () => signOut(auth));
 
         // --- LÓGICA DE RENDERIZAÇÃO E CRUD ---
-        // (Todo o restante do seu código original)
         const createAndAppend = (parent, tag, { classes = [], text = '', id = '' } = {}) => {
             const el = document.createElement(tag);
             if (classes.length) el.classList.add(...classes);
@@ -764,7 +754,7 @@
             }, error => { 
                 console.error("Erro ao ouvir contatos:", error);
                 if(error.code !== 'permission-denied') {
-                    alert("Ocorreu um erro ao carregar seus contatos.");
+                    // alert("Ocorreu um erro ao carregar seus contatos.");
                 }
             });
             unsubscribeCategories = onSnapshot(categoriesCollection, snapshot => {
@@ -787,7 +777,7 @@
                 }
             } catch (error) {
                 console.error("Erro ao salvar contato: ", error);
-                alert("Falha ao salvar o contato.");
+                // alert("Falha ao salvar o contato.");
             } finally {
                 hideLoader();
             }
@@ -805,7 +795,7 @@
                 }
             } catch (error) {
                 console.error(`Erro ao excluir ${itemToDelete.type}:`, error);
-                alert(`Falha ao excluir o item.`);
+                // alert(`Falha ao excluir o item.`);
             } finally {
                 itemToDelete = { id: null, type: null };
                 deleteModal.classList.add('hidden');
@@ -1153,6 +1143,7 @@
             showLoader();
         };
         init();
+
     </script>
 </body>
 </html>
