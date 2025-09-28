@@ -742,7 +742,6 @@
                     <input type="hidden" id="contact-id">
                     <div class="form-group"><label for="form-firstName">Nome</label><input type="text" id="form-firstName" class="form-input" required></div>
                     <div class="form-group"><label for="form-lastName">Sobrenome</label><input type="text" id="form-lastName" class="form-input"></div>
-                    
                     <div class="form-group tag-input-wrapper">
                         <label for="tag-input-field">Categorias</label>
                         <div id="tag-input-container" class="tag-input-container">
@@ -750,16 +749,13 @@
                         </div>
                         <div id="tag-input-suggestions" class="tag-input-suggestions hidden"></div>
                     </div>
-
                     <div class="form-group"><label for="form-email">Email</label><input type="email" id="form-email" class="form-input"></div>
                     <div class="form-group"><label for="form-phone-fixed">Telefone Fixo</label><input type="tel" id="form-phone-fixed" class="form-input" placeholder="(xx) xxxx-xxxx"></div>
                     <div class="form-group"><label for="form-phone-mobile">Telefone Celular</label><input type="tel" id="form-phone-mobile" class="form-input" placeholder="(xx) xxxxx-xxxx"></div>
-                    
                     <div class="form-group"><label for="form-website">Website</label><input type="url" id="form-website" class="form-input" placeholder="https://..."></div>
                     <div class="form-group"><label for="form-linkedin">LinkedIn</label><input type="url" id="form-linkedin" class="form-input" placeholder="https://linkedin.com/in/..."></div>
                     <div class="form-group"><label for="form-facebook">Facebook</label><input type="url" id="form-facebook" class="form-input" placeholder="https://facebook.com/..."></div>
                     <div class="form-group"><label for="form-instagram">Instagram</label><input type="text" id="form-instagram" class="form-input" placeholder="@usuario"></div>
-
                     <div class="form-row">
                         <div class="form-group" style="flex: 3;"><label for="form-street">Rua</label><input type="text" id="form-street" class="form-input" maxlength="40"></div>
                         <div class="form-group" style="flex: 1;"><label for="form-number">Número</label><input type="text" id="form-number" class="form-input" maxlength="6"></div>
@@ -770,7 +766,6 @@
                         <div class="form-group" style="flex: 1;"><label for="form-state">Estado</label><select id="form-state" class="form-select"></select></div>
                         <div class="form-group" style="flex: 1;"><label for="form-zip">CEP</label><input type="text" id="form-zip" class="form-input" placeholder="xxxxx-xxx"></div>
                     </div>
-
                     <div class="form-group">
                         <label>Data de Aniversário</label>
                         <div class="form-row">
@@ -778,7 +773,6 @@
                             <div class="form-group" style="flex: 2; margin-bottom: 0;"><label for="form-anniversary-month" class="hidden">Mês</label><select id="form-anniversary-month" class="form-select"></select></div>
                         </div>
                     </div>
-
                     <div class="form-group"><label for="form-notes">Notas</label><textarea id="form-notes" class="form-input" rows="4"></textarea></div>
                     <div style="display:flex; gap: 10px;">
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -873,8 +867,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script type="module">
-        // --- IMPORTAÇÕES DO FIREBASE (SDK MODULAR v9) ---
+        // --- 1: IMPORTAR OS MÓDULOS DO FIREBASE E APP CHECK ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app-check.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword, getIdTokenResult } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
         import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         import { getFunctions, httpsCallable, connectFunctionsEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-functions.js";
@@ -893,6 +888,13 @@
 
         // --- INICIALIZAÇÃO DO FIREBASE ---
         const app = initializeApp(firebaseConfig);
+        
+        // --- 2: INICIALIZAR O APP CHECK COM A SUA CHAVE ---
+        const appCheck = initializeAppCheck(app, {
+          provider: new ReCaptchaV3Provider('6Lc7M9crAAAAAPO5TqV97ZATP5mUZi-q_5GQfx_by'), // Chave do site reCAPTCHA v3 preenchida
+          isTokenAutoRefreshEnabled: true
+        });
+
         const auth = getAuth(app);
         auth.languageCode = 'pt-BR';
         const db = getFirestore(app);
@@ -1084,90 +1086,69 @@
         });
 
         // =========================================================================
-        // --- CORREÇÃO INÍCIO: CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO ---
-        // Este bloco substitui a lógica antiga para resolver o problema do token em cache.
-        // Ele se torna o único "porteiro" do aplicativo.
+        // --- CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO (VERSÃO FINAL) ---
         // =========================================================================
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // 1. USUÁRIO ESTÁ LOGADO - Inicia a verificação de permissões.
                 console.log("Usuário detectado:", user.email);
-                showLoader(); // Mostra o loader durante a verificação.
+                showLoader(); 
 
-                // 2. FORÇA A ATUALIZAÇÃO DO TOKEN para buscar as permissões mais recentes do servidor.
-                // O `true` é a parte mais importante para resolver o problema do cache.
                 getIdTokenResult(user, true)
                     .then((idTokenResult) => {
                         const isApproved = idTokenResult.claims.approved === true;
                         console.log("Permissões verificadas. Aprovado:", isApproved);
 
-                        // Mostra o email do usuário na interface
                         userEmailText.textContent = user.email;
                         userDisplay.classList.remove('hidden');
                         
-                        // Esconde a tela de login/cadastro e mostra a área principal do app.
                         authContainer.classList.add('hidden');
                         appView.classList.remove('hidden');
 
                         if (isApproved) {
-                            // 3a. APROVADO! Inicia o aplicativo normalmente.
                             console.log("Acesso concedido.");
                             
-                            // Define as coleções do Firestore para este usuário.
                             contactsCollection = collection(db, 'contatos', user.uid, 'lista');
                             categoriesCollection = collection(db, 'contatos', user.uid, 'categorias');
                             
-                            // Inicia a escuta por atualizações em tempo real nos dados.
                             attachFirestoreListener();
                             
-                            // Garante que os botões de ação na barra lateral estejam visíveis.
                              document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.remove('hidden');
                             
-                            // Mostra a tela de boas-vindas.
                             if (window.innerWidth > 768) {
                                 showMainContentView(welcomeView);
                             } else {
                                 hideMainContentView();
                             }
                         } else {
-                            // 3b. NÃO APROVADO! Mostra a tela de "Aguardando Aprovação".
                             console.log("Acesso pendente. Mostrando tela de espera.");
                             showMainContentView(pendingApprovalView);
                             
-                            // Desativa as interações da barra lateral.
                             contactList.innerHTML = '';
                             categoryFiltersContainer.innerHTML = '';
                             document.querySelector('.sidebar-footer .btn-danger').previousElementSibling.classList.add('hidden');
                         }
                     })
                     .catch((error) => {
-                        // 4. ERRO CRÍTICO ao verificar permissões. Desloga o usuário por segurança.
                         console.error("Erro crítico ao verificar token e permissões:", error);
                         alert("Ocorreu um erro ao verificar suas permissões. Por favor, tente fazer login novamente.");
-                        signOut(auth); // Desloga o usuário para evitar um estado inconsistente.
+                        signOut(auth); 
                     })
                     .finally(() => {
-                        // Esconde o loader após a verificação terminar (sucesso ou falha).
                         hideLoader();
                     });
 
             } else {
-                // 5. NENHUM USUÁRIO LOGADO - Garante que a tela de login seja exibida.
                 console.log("Nenhum usuário logado. Exibindo tela de login.");
                 
-                // Mostra a tela de autenticação e esconde o app.
                 authContainer.classList.remove('hidden');
                 appView.classList.add('hidden');
                 
-                // Para a escuta de dados para evitar erros.
                 if (unsubscribeContacts) unsubscribeContacts();
                 if (unsubscribeCategories) unsubscribeCategories();
                 
-                // Limpa caches de dados.
                 contactsCache = [];
                 categoriesCache = [];
                 
-                // Limpa a interface do usuário.
                 renderContactList();
                 renderCategoryFilters();
                 userDisplay.classList.add('hidden');
@@ -1178,13 +1159,7 @@
         });
         
         // =========================================================================
-        // --- CORREÇÃO FIM: CONTROLE CENTRAL DE AUTENTICAÇÃO E PERMISSÃO ---
-        // =========================================================================
-
-
-        // =========================================================================
-        // --- CORREÇÃO INÍCIO: MELHORIA NO FORMULÁRIO DE LOGIN E CADASTRO ---
-        // Este bloco melhora o feedback para o usuário durante o login e o cadastro.
+        // --- FORMULÁRIO DE LOGIN E CADASTRO (VERSÃO FINAL) ---
         // =========================================================================
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1196,12 +1171,8 @@
             
             try {
                 if (isLoginMode) {
-                    // --- FLUXO DE LOGIN ---
                     await signInWithEmailAndPassword(auth, email, password);
-                    // O 'onAuthStateChanged' agora cuida de tudo após o sucesso.
-                    // Não precisamos esconder o loader aqui, o onAuthStateChanged fará isso.
                 } else {
-                    // --- FLUXO DE CADASTRO ---
                     const confirmPassword = document.getElementById('confirm-password').value;
                     if (password !== confirmPassword) {
                         throw new Error("As senhas não coincidem.");
@@ -1211,16 +1182,11 @@
                     }
 
                     await createUserWithEmailAndPassword(auth, email, password);
-                    // SUCESSO NO CADASTRO!
-                    // O 'onAuthStateChanged' será acionado e mostrará a tela de espera correta.
-                    // Não precisamos fazer nada aqui, pois o listener central já cuida disso.
-                    // O loader será escondido pelo onAuthStateChanged.
                 }
             } catch (error) {
-                hideLoader(); // IMPORTANTE: Esconder o loader em caso de erro.
+                hideLoader(); 
                 console.error("Erro no formulário de autenticação:", error);
                 
-                // Lógica para exibir mensagens de erro específicas.
                 switch (error.code) {
                     case 'auth/user-not-found':
                         authError.textContent = "Nenhum usuário encontrado com este e-mail.";
@@ -1241,15 +1207,10 @@
                         authError.textContent = "Acesso bloqueado temporariamente. Tente mais tarde.";
                         break;
                     default:
-                        // Usa a mensagem de erro customizada (ex: "As senhas não coincidem") ou uma genérica.
                         authError.textContent = error.message || "Ocorreu um erro inesperado.";
                 }
             }
         });
-        // =========================================================================
-        // --- CORREÇÃO FIM: MELHORIA NO FORMULÁRIO DE LOGIN E CADASTRO ---
-        // =========================================================================
-
 
         resetPasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1276,7 +1237,7 @@
 
         logoutBtn.addEventListener('click', () => signOut(auth));
 
-        // --- LÓGICA DE RENDERIZAÇÃO ---
+        // --- O RESTANTE DO SEU CÓDIGO (RENDERIZAÇÃO, CRUD, EVENTOS) ---
         const createAndAppend = (parent, tag, { classes = [], text = '', id = '' } = {}) => {
             const el = document.createElement(tag);
             if (classes.length) el.classList.add(...classes);
@@ -1285,7 +1246,6 @@
             parent.appendChild(el);
             return el;
         };
-
         const renderContactList = () => {
             contactList.innerHTML = '';
             const filteredContacts = contactsCache.filter(contact => {
@@ -1297,12 +1257,10 @@
                 const email = (contact.data.email || '').toLowerCase();
                 return fullName.includes(searchTerm) || email.includes(searchTerm);
             }).sort((a, b) => (a.data.firstName || '').localeCompare(b.data.firstName || ''));
-
             if (filteredContacts.length === 0) {
                 contactList.innerHTML = `<p style="padding: 16px;" class="text-secondary">${currentFilter ? 'Nenhum contato encontrado.' : 'Sua lista de contatos está vazia.'}</p>`;
                 return;
             }
-
             filteredContacts.forEach(contact => {
                 const item = createAndAppend(contactList, 'div', { classes: ['contact-item'] });
                 item.dataset.id = contact.id;
@@ -1315,7 +1273,6 @@
                 item.addEventListener('click', () => showContactDetails(contact.id));
             });
         };
-        
         const renderCategoryFilters = () => {
             categoryFiltersContainer.innerHTML = '';
             const allBtn = createAndAppend(categoryFiltersContainer, 'button', { text: 'Todos', classes: ['btn', 'category-filter-btn'] });
@@ -1325,7 +1282,6 @@
                 renderCategoryFilters();
                 renderContactList();
             });
-
             categoriesCache.sort((a, b) => a.data.name.localeCompare(b.data.name)).forEach(category => {
                 const btn = createAndAppend(categoryFiltersContainer, 'button', { text: category.data.name, classes: ['btn', 'category-filter-btn'] });
                 if(currentCategoryFilter === category.data.name) btn.classList.add('active');
@@ -1336,28 +1292,23 @@
                 });
             });
         };
-        
         const renderBirthdayList = () => {
             birthdayList.innerHTML = '';
             const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             document.getElementById('birthday-title').textContent = `Aniversariantes de ${monthNames[selectedBirthdayMonth - 1]}`;
-
             const birthdayContacts = contactsCache
                 .filter(c => c.data.anniversary?.month === selectedBirthdayMonth)
                 .sort((a, b) => (a.data.anniversary.day || 0) - (b.data.anniversary.day || 0));
-
             if (birthdayContacts.length === 0) {
                 birthdayList.innerHTML = `<p class="text-secondary" style="padding: 16px;">Nenhum aniversariante em ${monthNames[selectedBirthdayMonth - 1]}.</p>`;
                 return;
             }
-
             birthdayContacts.forEach(contact => {
                 const item = createAndAppend(birthdayList, 'div', { classes: ['birthday-item'] });
                 const infoDiv = createAndAppend(item, 'div');
                 const name = `${contact.data.firstName || ''} ${contact.data.lastName || ''}`.trim();
                 createAndAppend(infoDiv, 'div', { text: name, classes: ['contact-name'] }).style.fontWeight = '500';
                 createAndAppend(infoDiv, 'div', { text: `Dia ${contact.data.anniversary.day}`, classes: ['text-secondary'] }).style.fontSize = '0.9rem';
-                
                 if (contact.data.phone?.mobile) {
                     const actionsDiv = createAndAppend(item, 'div', { classes: ['birthday-item-actions'] });
                     const whatsappLink = createAndAppend(actionsDiv, 'a', { classes: ['whatsapp-btn'] });
@@ -1368,7 +1319,6 @@
                 }
             });
         };
-        
         const renderCategoryList = () => {
             categoryList.innerHTML = '';
             if (categoriesCache.length === 0) {
@@ -1382,12 +1332,9 @@
                 deleteBtn.dataset.id = category.id;
             });
         };
-
-        // --- LÓGICA DO FIRESTORE (CRUD) ---
         const attachFirestoreListener = () => {
             if (unsubscribeContacts) unsubscribeContacts();
             if (unsubscribeCategories) unsubscribeCategories();
-            
             unsubscribeContacts = onSnapshot(contactsCollection, snapshot => {
                 contactsCache = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
                 renderContactList();
@@ -1397,9 +1344,7 @@
                 if(error.code !== 'permission-denied') {
                     alert("Ocorreu um erro ao carregar seus contatos.");
                 }
-                // Não precisamos mais tratar o 'permission-denied' aqui, pois o onAuthStateChanged já cuida disso.
             });
-
             unsubscribeCategories = onSnapshot(categoriesCollection, snapshot => {
                 categoriesCache = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
                 renderCategoryFilters();
@@ -1408,7 +1353,6 @@
                 console.error("Erro ao ouvir categorias:", error); 
             });
         };
-
         const saveContact = async (id, data) => {
             showLoader();
             try {
@@ -1426,7 +1370,6 @@
                 hideLoader();
             }
         };
-
         const deleteItem = async () => {
             if (!itemToDelete.id || !itemToDelete.type) return;
             showLoader();
@@ -1447,22 +1390,17 @@
                 hideLoader();
             }
         };
-
-        // --- MANIPULAÇÃO DE EVENTOS DA UI ---
         searchInput.addEventListener('input', (e) => {
             currentFilter = e.target.value;
             renderContactList();
         });
-
         const showContactDetails = (id) => {
             const contactWrapper = contactsCache.find(c => c.id === id);
             if (!contactWrapper) return;
             const contact = contactWrapper.data;
             currentContactId = id;
             renderContactList();
-
             document.getElementById('detail-name').textContent = `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
-            
             const categoriesContainer = document.getElementById('detail-categories-container');
             categoriesContainer.innerHTML = '<strong>Categorias:</strong>';
             if(contact.categories && contact.categories.length > 0) {
@@ -1471,10 +1409,8 @@
             } else {
                 categoriesContainer.classList.add('hidden');
             }
-
             document.getElementById('detail-email').textContent = contact.email || 'Não informado';
             document.getElementById('detail-email-link').href = contact.email ? `mailto:${contact.email}` : '#';
-
             const setupDetailField = (containerId, linkId, spanId, value, linkPrefix) => {
                 const container = document.getElementById(containerId);
                 if (value) {
@@ -1486,10 +1422,8 @@
                 container.classList.add('hidden');
                 return false;
             };
-
             const mobileVisible = setupDetailField('detail-phone-mobile-container', 'detail-phone-mobile-link', 'detail-phone-mobile', contact.phone?.mobile, 'tel:');
             setupDetailField('detail-phone-fixed-container', 'detail-phone-fixed-link', 'detail-phone-fixed', contact.phone?.fixed, 'tel:');
-
             const phoneMobileContainer = document.getElementById('detail-phone-mobile-container');
             phoneMobileContainer.querySelector('.whatsapp-btn')?.remove();
             if (mobileVisible) {
@@ -1498,14 +1432,12 @@
                 whatsappLink.target = '_blank';
                 whatsappLink.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.487 5.235 3.487 8.413C24 18.667 18.664 24 12.107 24h-.004c-1.963 0-3.898-.523-5.574-1.454l-6.341 1.688zM12.107 2.109c-5.468 0-9.908 4.44-9.908 9.908 0 2.098.631 4.062 1.735 5.748l-.926 3.385 3.468-.919c1.64.923 3.492 1.419 5.438 1.419h.004c5.468 0 9.908-4.44 9.908-9.908s-4.44-9.908-9.908-9.908zm4.717 11.382c-.272-.136-1.606-.79-1.855-.878-.247-.088-.427-.136-.607.136-.18.272-.703.878-.863 1.054-.16.176-.32.198-.6.062-.28-.136-1.187-.44-2.258-1.384-1.071-.944-1.792-2.108-2.096-2.46-.303-.352-.027-.55.11-.703.124-.136.272-.352.408-.528.136-.176.18-.295.272-.493.09-.198.045-.378-.023-.514-.068-.136-.607-1.455-.832-1.98-.225-.525-.45-.45-.62-.458-.17-.008-.37-.01-.55-.01-.18 0-.45.068-.68.342-.23.272-.878.863-.878 2.108s.898 2.44 1.018 2.616c.12.176 1.74 2.662 4.22 3.728 2.48.996 2.48 1.58 2.92 1.556.44-.023 1.606-.656 1.83-1.29.225-.63.225-1.162.16-1.29-.068-.136-.247-.204-.52-.34z"/></svg>`;
             }
-
             const addressContainer = document.getElementById('detail-address-container');
             const addressSpan = document.getElementById('detail-address');
             const { street, number, complement, city, state, zip } = contact.address || {};
             const addressParts = [street && number ? `${street}, ${number}` : street, complement, city, state, zip].filter(Boolean);
             addressSpan.textContent = addressParts.join(' - ');
             addressContainer.classList.toggle('hidden', addressParts.length === 0);
-
             const anniversaryContainer = document.getElementById('detail-anniversary-container');
             const anniversarySpan = document.getElementById('detail-anniversary');
             if (contact.anniversary?.day && contact.anniversary?.month) {
@@ -1515,7 +1447,6 @@
             } else {
                 anniversaryContainer.classList.add('hidden');
             }
-            
             const socialContainer = document.getElementById('detail-social-container');
             socialContainer.innerHTML = '<strong>Redes Sociais:</strong>';
             let hasSocial = false;
@@ -1536,24 +1467,20 @@
                 }
             });
             socialContainer.classList.toggle('hidden', !hasSocial);
-
             document.getElementById('detail-notes').textContent = contact.notes || 'Nenhuma nota.';
             showMainContentView(detailView);
         };
-
         const showContactForm = (contactId = null) => {
             contactForm.reset();
             document.getElementById('contact-id').value = '';
             selectedCategoriesForForm.clear();
             document.getElementById('form-title').textContent = 'Adicionar Novo Contato';
-
             if (contactId) {
                 const contactWrapper = contactsCache.find(c => c.id === contactId);
                 if (!contactWrapper) return;
                 const contact = contactWrapper.data;
                 document.getElementById('form-title').textContent = 'Editar Contato';
                 document.getElementById('contact-id').value = contactId;
-
                 const fields = {
                     'form-firstName': contact.firstName, 'form-lastName': contact.lastName, 'form-email': contact.email,
                     'form-phone-fixed': contact.phone?.fixed, 'form-phone-mobile': contact.phone?.mobile,
@@ -1568,34 +1495,27 @@
                 }
                 if (contact.categories) contact.categories.forEach(cat => selectedCategoriesForForm.add(cat));
             }
-            
             renderSelectedTags();
             showMainContentView(formView);
         };
-
         addContactBtn.addEventListener('click', () => showContactForm());
         editContactBtn.addEventListener('click', () => showContactForm(currentContactId));
-        
         showBirthdayBtn.addEventListener('click', () => {
             selectedBirthdayMonth = new Date().getMonth() + 1;
             monthFilter.value = selectedBirthdayMonth;
             renderBirthdayList();
             showMainContentView(birthdayView);
         });
-        
         showCategoryBtn.addEventListener('click', () => {
             renderCategoryList();
             showMainContentView(categoryView);
         });
-        
         importCsvBtn.addEventListener('click', () => {
             importModal.classList.remove('hidden');
             importStatus.textContent = '';
             csvFileInput.value = '';
         });
-
         importCancelBtn.addEventListener('click', () => importModal.classList.add('hidden'));
-
         importStartBtn.addEventListener('click', () => {
             const file = csvFileInput.files[0];
             if (!file) { importStatus.textContent = "Por favor, selecione um arquivo."; return; }
@@ -1629,12 +1549,10 @@
                 error: (error) => { hideLoader(); importStatus.textContent = "Erro ao ler o arquivo CSV."; console.error("CSV Parse Error:", error); }
             });
         });
-        
         monthFilter.addEventListener('change', (e) => {
             selectedBirthdayMonth = parseInt(e.target.value, 10);
             renderBirthdayList();
         });
-
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('contact-id').value;
@@ -1652,22 +1570,17 @@
             if(!id) data.createdAt = serverTimestamp();
             saveContact(id, data);
         });
-
         cancelFormBtn.addEventListener('click', () => {
-            // Se estiver em modo mobile, sempre volta para a lista principal
             if (window.innerWidth <= 768) {
                 hideMainContentView();
-                return; // Encerra a função aqui para não executar a lógica de desktop
+                return; 
             }
-
-            // Lógica original para desktop
             if (currentContactId) {
                 showContactDetails(currentContactId);
             } else {
                 showMainContentView(welcomeView);
             }
         });
-        
         addCategoryForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = newCategoryNameInput.value.trim();
@@ -1676,7 +1589,6 @@
                 newCategoryNameInput.value = '';
             }
         });
-
         categoryList.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-category-btn')) {
                 itemToDelete.id = e.target.dataset.id;
@@ -1686,10 +1598,8 @@
                 deleteModal.classList.remove('hidden');
             }
         });
-        
         ['form-phone-fixed', 'form-phone-mobile'].forEach(id => document.getElementById(id).addEventListener('input', applyPhoneMask));
         document.getElementById('form-zip').addEventListener('input', applyCepMask);
-
         deleteContactBtn.addEventListener('click', () => {
             itemToDelete.id = currentContactId;
             itemToDelete.type = 'contact';
@@ -1699,7 +1609,6 @@
         });
         cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
         confirmDeleteBtn.addEventListener('click', deleteItem);
-        
         const renderSelectedTags = () => {
             tagInputContainer.querySelectorAll('.tag-input-tag').forEach(tag => tag.remove());
             selectedCategoriesForForm.forEach(categoryName => {
@@ -1717,7 +1626,6 @@
                 tagInputContainer.prepend(tag);
             });
         };
-
         tagInputField.addEventListener('input', () => {
             const inputText = tagInputField.value.toLowerCase();
             tagInputSuggestions.innerHTML = '';
@@ -1739,7 +1647,6 @@
                 tagInputSuggestions.classList.add('hidden');
             }
         });
-        
         tagInputField.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -1752,13 +1659,10 @@
                 }
             }
         });
-
         document.addEventListener('click', (e) => {
             if (!tagInputContainer.contains(e.target)) tagInputSuggestions.classList.add('hidden');
         });
-
         document.querySelectorAll('.back-to-list-btn').forEach(btn => btn.addEventListener('click', hideMainContentView));
-        
         document.querySelectorAll('.password-toggle-icon').forEach(icon => {
             icon.addEventListener('click', () => {
                 const passwordInput = document.getElementById(icon.dataset.target);
@@ -1768,18 +1672,15 @@
                 icon.querySelector('.eye-off-icon').classList.toggle('hidden', !isPassword);
             });
         });
-        
         settingsBtn.addEventListener('click', () => {
             const isHidden = settingsSubmenu.classList.toggle('hidden');
             settingsArrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
         });
-        
         changePasswordBtn.addEventListener('click', () => {
             showMainContentView(changePasswordView);
             changePasswordForm.reset();
             changePasswordMessage.textContent = '';
         });
-        
         changePasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const currentPassword = document.getElementById('current-password').value;
@@ -1802,7 +1703,6 @@
                 hideLoader();
             }
         });
-        
         const applyTheme = (theme) => {
             document.body.className = theme;
             localStorage.setItem('agenda-theme', theme);
@@ -1810,22 +1710,18 @@
             themeIconSun.classList.toggle('hidden', isDark);
             themeIconMoon.classList.toggle('hidden', !isDark);
         };
-
         themeToggleBtn.addEventListener('click', () => {
             const newTheme = document.body.className === 'light-theme' ? 'dark-theme' : 'light-theme';
             applyTheme(newTheme);
         });
-        
         const handleResize = () => {
             if (window.innerWidth > 768) {
                 mainContent.classList.remove('visible');
                 sidebar.classList.remove('has-selection');
-                showMainContentView(welcomeView); // Mostra a welcome view se a tela for redimensionada para desktop
+                showMainContentView(welcomeView); 
             }
         };
         window.addEventListener('resize', handleResize);
-        
-        // --- INICIALIZAÇÃO ---
         const init = () => {
             populateStates();
             populateAnniversarySelectors();
@@ -1834,7 +1730,6 @@
             applyTheme(savedTheme);
             showLoader();
         };
-
         init();
     </script>
 </body>
