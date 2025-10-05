@@ -5,141 +5,158 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Agenda de Contatos Online</title>
   <style>
-    :root {
-      --bg-light: #F8F9FA;
-      --surface-light: #FFFFFF;
-      --text-primary-light: #212529;
-      --text-secondary-light: #6C757D;
-      --accent-light: #4C6EF5;
-      --accent-hover-light: #3B5BDB;
-      --danger-light: #E03131;
-      --success-light: #2F9E44;
-      --border-light: #DEE2E6;
-    }
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-light);
-      display: flex; align-items: center; justify-content: center;
-      height: 100vh;
-    }
-    #app {
-      background: var(--surface-light);
-      padding: 2rem; border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 320px;
-    }
-    h2 { color: var(--accent-light); margin-bottom: 1rem; }
-    form { display: flex; flex-direction: column; gap: 0.75rem; }
-    input, button {
-      padding: 0.5rem; font-size: 1rem; border-radius: 4px;
-    }
-    input { border: 1px solid var(--border-light); }
-    button {
-      border: none; background: var(--accent-light); color: #fff;
-      cursor: pointer;
-    }
-    button:hover { background: var(--accent-hover-light); }
-    #message { margin-top: 1rem; text-align: center; min-height: 1.2em; }
-    #contacts-container { margin-top: 1rem; }
+    body { font-family: Arial, sans-serif; max-width:600px; margin:2rem auto; padding:1rem; }
+    button { cursor:pointer; padding:.5rem 1rem; margin-top:.5rem; }
+    form { margin-bottom:1rem; }
+    label { margin-right:1rem; }
+    #message { margin:1rem 0; font-weight:bold; }
+    #contacts-container div { margin-bottom:1rem; }
   </style>
 </head>
 <body>
   <div id="app">
+    <button id="btn-logout" style="display:none; margin-bottom:1rem;">Logout</button>
+
     <form id="form-signup">
       <h2>Crie sua Conta</h2>
       <input name="email-signup" type="email" placeholder="Email" required />
       <input name="password-signup" type="password" placeholder="Senha" required minlength="6" />
       <button type="submit">Cadastrar</button>
     </form>
+
     <form id="form-login" style="display:none;">
       <h2>Login</h2>
       <input name="email-login" type="email" placeholder="Email" required />
       <input name="password-login" type="password" placeholder="Senha" required />
       <button type="submit">Entrar</button>
     </form>
+
     <p id="message"></p>
     <div id="contacts-container" style="display:none;"></div>
   </div>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    import { createClient } from '@supabase/supabase-js';
 
-    // Variáveis de ambiente definidas no Netlify:
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    console.log('Cliente Supabase inicializado com sucesso.');
+    const supabase   = createClient(supabaseUrl, supabaseKey);
 
-    const formSignUp = document.getElementById('form-signup');
-    const formLogin  = document.getElementById('form-login');
-    const messageEl  = document.getElementById('message');
+    const formSignUp        = document.getElementById('form-signup');
+    const formLogin         = document.getElementById('form-login');
+    const btnLogout         = document.getElementById('btn-logout');
+    const messageEl         = document.getElementById('message');
     const contactsContainer = document.getElementById('contacts-container');
 
     function showMessage(text, isError = false) {
       messageEl.textContent = text;
-      messageEl.style.color = isError ? 'var(--danger-light)' : 'var(--success-light)';
+      messageEl.style.color = isError ? 'red' : 'green';
     }
+
+    async function updateUI(session) {
+      if (session) {
+        formSignUp.style.display        = 'none';
+        formLogin.style.display         = 'block';
+        btnLogout.style.display         = 'inline-block';
+        await loadContacts();
+      } else {
+        formSignUp.style.display        = 'block';
+        formLogin.style.display         = 'none';
+        btnLogout.style.display         = 'none';
+        contactsContainer.style.display = 'none';
+      }
+    }
+
+    // Ajuste correto do callback
+    supabase.auth.onAuthStateChange((event, session) => {
+      updateUI(session);
+    });
+
+    // Inicializa estado ao carregar
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      updateUI(session);
+    })();
+
+    btnLogout.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+    });
 
     formSignUp.addEventListener('submit', async e => {
       e.preventDefault();
       const email    = formSignUp['email-signup'].value;
       const password = formSignUp['password-signup'].value;
-      try {
-        const { user, error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        showMessage('Cadastro realizado! Verifique seu e-mail.', false);
-      } catch (err) {
-        showMessage(err.message, true);
-      }
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) return showMessage(error.message, true);
+      showMessage('Cadastro realizado! Você já pode fazer login.', false);
+      formSignUp.reset();
     });
 
     formLogin.addEventListener('submit', async e => {
       e.preventDefault();
       const email    = formLogin['email-login'].value;
       const password = formLogin['password-login'].value;
-      try {
-        const { session, error } = await supabase.auth.signIn({ email, password });
-        if (error) throw error;
-        window.location.reload();
-      } catch (err) {
-        showMessage(err.message, true);
-      }
-    });
-
-    supabase.auth.onAuthStateChange((_, session) => {
-      if (session) {
-        formSignUp.style.display = 'none';
-        formLogin.style.display  = 'none';
-        contactsContainer.style.display = 'block';
-        loadContacts();
-      } else {
-        formSignUp.style.display = '';
-        formLogin.style.display  = 'none';
-        contactsContainer.style.display = 'none';
-      }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return showMessage('Credenciais inválidas.', true);
+      showMessage('', false);
+      // Atualiza imediatamente a interface após login
+      updateUI(data.session);
     });
 
     async function loadContacts() {
-      try {
-        const { data, error } = await supabase
-          .from('contacts')
-          .select('*')
-          .order('name', { ascending: true });
-        if (error) throw error;
-        renderContacts(data);
-      } catch {
-        showMessage('Falha ao carregar contatos.', true);
-      }
+      const { data: contacts, error: err1 } = await supabase
+        .from('contatos')
+        .select(`
+          id,
+          nome,
+          email,
+          observacoes,
+          dados_contato,
+          contato_categoria!inner(categoria_id,categorias(nome))
+        `)
+        .order('nome', { ascending: true });
+      if (err1) return showMessage('Erro ao carregar contatos.', true);
+
+      const { data: categorias, error: err2 } = await supabase
+        .from('categorias')
+        .select('id,nome')
+        .order('nome', { ascending: true });
+      if (err2) return showMessage('Erro ao carregar categorias.', true);
+
+      renderContacts(contacts, categorias);
     }
 
-    function renderContacts(list) {
-      contactsContainer.innerHTML = '<h2>Meus Contatos</h2>';
-      list.forEach(c => {
-        const el = document.createElement('div');
-        el.textContent = `${c.name} – ${c.email}`;
-        contactsContainer.appendChild(el);
+    function renderContacts(contatos, categorias) {
+      contactsContainer.style.display = 'block';
+      contactsContainer.innerHTML     = '<h2>Meus Contatos</h2>';
+
+      contatos.forEach(c => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <strong>${c.nome}</strong> – ${c.email}<br/>
+          <small>${c.observacoes||''}</small>
+          <form data-id="${c.id}">
+            ${categorias.map(cat => {
+              const checked = c.contato_categoria.some(cc=>cc.categoria_id===cat.id);
+              return `<label>
+                        <input type="checkbox" value="${cat.id}" ${checked?'checked':''}/>
+                        ${cat.nome}
+                      </label>`;
+            }).join('')}
+            <button type="submit">Salvar Categorias</button>
+          </form><hr/>`;
+        contactsContainer.appendChild(div);
+
+        div.querySelector('form').addEventListener('submit', async e => {
+          e.preventDefault();
+          const id = e.target.dataset.id;
+          const checked = Array.from(e.target.querySelectorAll('input:checked'))
+                               .map(i=>parseInt(i.value));
+          await supabase.from('contato_categoria').delete().eq('contato_id',id);
+          if (checked.length)
+            await supabase.from('contato_categoria').insert(checked.map(cid=>({contato_id:id,categoria_id:cid})));
+          showMessage('Categorias atualizadas!', false);
+        });
       });
     }
   </script>
